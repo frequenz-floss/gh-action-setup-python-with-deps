@@ -1,0 +1,44 @@
+name: "Setup Python with dependencies"
+description: "Installs Python and some extra dependencies."
+author: "Frequenz Energy-as-a-Service GmbH"
+
+# Refer to the following link(s) for more information on inputs:
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs
+inputs:
+  version:
+    description: >
+      The Python version to use. This is passed to the `actions/setup-python`.
+    required: true
+  dependencies:
+    description: >
+      The dependencies to install. If empty, no dependencies are installed.
+
+      This is passed to the `pip install` command as is, without any shell escaping.
+    required: false
+    default: ""
+
+
+# Refer to the following link(s) for more information on the composite run steps:
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      with:
+        python-version: ${{ inputs.version }}
+        cache: 'pip'
+
+    - name: Upgrade pip
+      shell: bash
+      run: python -m pip install --upgrade pip
+
+    - name: Install the dependencies
+      shell: bash
+      if: ${{ inputs.dependencies != '' }}
+      run: python -m pip install ${{ inputs.dependencies }}
+
+    - name: Print the installed dependencies (debug)
+      shell: bash
+      if: ${{ inputs.dependencies != '' }}
+      run: python -m pip freeze
