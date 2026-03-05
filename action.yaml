@@ -36,7 +36,9 @@ runs:
     - name: Install the dependencies
       shell: bash
       if: ${{ inputs.dependencies != '' }}
-      run: python -m pip install ${{ inputs.dependencies }}
+      env:
+        DEPENDENCIES: ${{ inputs.dependencies }}
+      run: echo "$DEPENDENCIES" | xargs python -m pip install
 
     - name: Print the installed dependencies (debug)
       shell: bash
