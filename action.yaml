@@ -38,7 +38,7 @@ runs:
       if: ${{ inputs.dependencies != '' }}
       env:
         DEPENDENCIES: ${{ inputs.dependencies }}
-      run: echo "$DEPENDENCIES" | xargs python -I -m pip install
+      run: ${{ github.action_path }}/scripts/install-dependencies.sh
 
     - name: Print the installed dependencies (debug)
       shell: bash

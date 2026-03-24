@@ -30,7 +30,35 @@ jobs:
    This is passed to the
    [`actions/setup-python`](https://github.com/actions/setup-python) action.
 
-* `dependencies`: The dependencies to install. Default: "".
+* `dependencies`: The dependencies to install. Default: `""`.
 
-  This is passed to the `pip install` command as is, without any shell
-  escaping. If empty, no dependencies are installed. 
+  A whitespace-separated list of dependencies passed to `pip install`. If empty,
+  no dependencies are installed.
+
+  **Supported:**
+
+  - Standard package names and version specifiers (e.g., `pytest`,
+    `requests>=2.0`, `mkdocs[all]`).
+  - Local wheel files (`.whl`), including safe glob patterns (e.g.,
+    `dist/*.whl`).
+
+  **Not Supported (Blocked for Security):**
+  To prevent arbitrary code execution from untrusted checked-out code in
+  `pull_request_target` workflows, the following are explicitly blocked:
+
+  - Editable installs (`-e`, `--editable`).
+  - Requirement files (`-r`, `--requirement`).
+  - Constraint files (`-c`, `--constraint`).
+  - Local source directory installations (e.g., `.`, `./pkg`).
+  - Local source distributions (`.tar.gz`, `.zip`).
+  - Local file URLs (`file://`).
+
+  **Security Features:**
+
+  - **Safe Execution:** This action runs Python in isolated mode (`python -I`),
+    which ignores the current working directory. This prevents path hijacking
+    attacks where a malicious `pip.py` could shadow the legitimate `pip`
+    module.
+  - **Safe Argument Parsing:** The `dependencies` input is parsed and
+    glob-expanded safely without shell `eval` or interpolation, preventing
+    shell command injection.
