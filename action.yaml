@@ -38,7 +38,11 @@ runs:
       if: ${{ inputs.dependencies != '' }}
       env:
         DEPENDENCIES: ${{ inputs.dependencies }}
-      run: ${{ github.action_path }}/scripts/install-dependencies.sh
+      # Use $GITHUB_ACTION_PATH (runtime expansion) rather than interpolating
+      # ${{ github.action_path }}: on Windows the latter pastes backslashes into
+      # the script source which bash strips, breaking the path.
+      run: |
+        "$GITHUB_ACTION_PATH/scripts/install-dependencies.sh"
 
     - name: Print the installed dependencies (debug)
       shell: bash
