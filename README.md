@@ -9,7 +9,7 @@ Here is an example demonstrating how to use it in a workflow:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
